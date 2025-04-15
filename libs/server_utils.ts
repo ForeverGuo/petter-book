@@ -1,5 +1,5 @@
 
-import crypto from 'crypto';
+import sha256 from 'crypto-js/sha256';
 import { NextResponse } from 'next/server';
 
 /**
@@ -8,7 +8,7 @@ import { NextResponse } from 'next/server';
  * @date 2025-04-11 11:46:33
 */
 export const generateHash = (data: string, bits = 32) => {
-  const fullHash = crypto.createHash('sha256').update(data).digest('hex');
+  const fullHash = sha256(data).toString();
   return fullHash.substring(0, bits);
 };
 
@@ -28,9 +28,9 @@ export const validateHash = (clientHash:string, serverData:string) => {
  * @author grantguo
  * @date 2025-04-11 13:32:14
 */
-export const responseError = (message: string | object) => {
+export const responseError = (message: string | object, code: number = 500) => {
   return NextResponse.json({
-    code: 500,
+    code: code,
     message,
   });
 };
@@ -46,3 +46,4 @@ export const responseSuccess = (data: string | object) => {
     data,
   });
 };
+

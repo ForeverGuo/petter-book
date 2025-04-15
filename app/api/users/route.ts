@@ -15,7 +15,6 @@ const UserSchema = z.object({
 */
 export async function GET() {
   const users = await prisma.users.findMany();
-  console.log(users);
   return responseSuccess(users);
 }
 

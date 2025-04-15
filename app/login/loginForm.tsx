@@ -5,8 +5,6 @@ import { Input } from "components/ui/input"
 import { Label } from "components/ui/label"
 import Image from 'next/image'
 import { LoginFormProps } from "./login.type"
-import { FormEvent } from "react"
-
 export function LoginForm({
   className,
   formData,

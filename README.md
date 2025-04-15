@@ -1,4 +1,4 @@
-your-project/
+/
 ├── app/                    # 核心路由目录（App Router）
 │   ├── layout.tsx          # 全局布局文件（所有页面共享）
 │   ├── page.tsx            # 首页路由（对应 /）

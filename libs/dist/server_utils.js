@@ -1,7 +1,7 @@
 "use strict";
 exports.__esModule = true;
 exports.responseSuccess = exports.responseError = exports.validateHash = exports.generateHash = void 0;
-var crypto_1 = require("crypto");
+var sha256_1 = require("crypto-js/sha256");
 var server_1 = require("next/server");
 /**
  * @description 生成hash
@@ -10,7 +10,7 @@ var server_1 = require("next/server");
 */
 exports.generateHash = function (data, bits) {
     if (bits === void 0) { bits = 32; }
-    var fullHash = crypto_1["default"].createHash('sha256').update(data).digest('hex');
+    var fullHash = sha256_1["default"](data).toString();
     return fullHash.substring(0, bits);
 };
 /**
@@ -27,9 +27,10 @@ exports.validateHash = function (clientHash, serverData) {
  * @author grantguo
  * @date 2025-04-11 13:32:14
 */
-exports.responseError = function (message) {
+exports.responseError = function (message, code) {
+    if (code === void 0) { code = 500; }
     return server_1.NextResponse.json({
-        code: 500,
+        code: code,
         message: message
     });
 };

@@ -58,7 +58,6 @@ function GET() {
                 case 0: return [4 /*yield*/, prisma_1.prisma.users.findMany()];
                 case 1:
                     users = _a.sent();
-                    console.log(users);
                     return [2 /*return*/, server_utils_1.responseSuccess(users)];
             }
         });

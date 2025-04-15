@@ -2,6 +2,8 @@
 
 import { FormEvent, useState } from "react"
 import { LoginForm } from "./loginForm"
+import { post } from "libs/client/utils"
+import Cookies from "js-cookie"
 export default function LoginPage() {
   const [ formData, setFormData ] = useState({
     username: "",
@@ -20,15 +22,8 @@ export default function LoginPage() {
     // 阻止表单默认行为
     e.preventDefault();
     console.log(formData)
-    const res = await fetch("/api/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(formData)
-    })
-    const data = await res.json()
-    console.log(data)
+    const res = await post("/api/login", formData)
+    Cookies.set("token", res.data.token)
   }
 
   return (
