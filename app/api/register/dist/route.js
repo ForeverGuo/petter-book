@@ -36,68 +36,66 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 exports.__esModule = true;
-exports.get = exports.post = void 0;
-var js_cookie_1 = require("js-cookie");
-var axios_1 = require("axios");
+exports.POST = void 0;
+var prisma_1 = require("libs/prisma");
+var server_utils_1 = require("libs/server_utils");
+var zod_1 = require("zod");
+// 用户注册校验模板
+var UserSchema = zod_1.z.object({
+    username: zod_1.z.string(),
+    email: zod_1.z.string().email(),
+    password: zod_1.z.string()
+});
 /**
- * @description post请求
+ * @description 用户注册
  * @author grantguo
- * @date 2025-04-15 10:24:10
+ * @date 2025-04-11 14:31:54
 */
-exports.post = function (url, data) { return __awaiter(void 0, void 0, void 0, function () {
-    var res;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4 /*yield*/, fetch(url, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'token': js_cookie_1["default"].get("token") || ""
-                    },
-                    body: JSON.stringify(data)
-                })];
-            case 1:
-                res = _a.sent();
-                return [2 /*return*/, res.json()];
-        }
-    });
-}); };
-/**
- * @description get请求
- * @author grantguo
- * @date 2025-04-15 10:24:20
-*/
-exports.get = function (url) { return __awaiter(void 0, void 0, void 0, function () {
-    var res;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4 /*yield*/, fetch(url, {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'token': js_cookie_1["default"].get("token") || ""
+function POST(req) {
+    return __awaiter(this, void 0, void 0, function () {
+        var data, validation, username, email, password, users, pass_hash, error_1;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, req.json()];
+                case 1:
+                    data = _a.sent();
+                    validation = UserSchema.safeParse(data);
+                    if (!validation.success) {
+                        return [2 /*return*/, server_utils_1.responseError({ error: '参数校验失败', details: validation.error })];
                     }
-                })];
-            case 1:
-                res = _a.sent();
-                return [2 /*return*/, res.json()];
-        }
+                    username = data.username, email = data.email, password = data.password;
+                    return [4 /*yield*/, prisma_1.prisma.users.findMany({
+                            where: {
+                                username: username
+                            }
+                        })];
+                case 2:
+                    users = _a.sent();
+                    if (users.length > 0) {
+                        return [2 /*return*/, server_utils_1.responseError("用户名已存在")];
+                    }
+                    pass_hash = server_utils_1.generateHash(password);
+                    _a.label = 3;
+                case 3:
+                    _a.trys.push([3, 5, , 6]);
+                    return [4 /*yield*/, prisma_1.prisma.users.create({
+                            data: {
+                                username: username,
+                                email: email,
+                                password: password,
+                                password_hash: pass_hash
+                            }
+                        })];
+                case 4:
+                    _a.sent();
+                    return [2 /*return*/, server_utils_1.responseSuccess("添加成功")];
+                case 5:
+                    error_1 = _a.sent();
+                    console.log(error_1);
+                    return [3 /*break*/, 6];
+                case 6: return [2 /*return*/];
+            }
+        });
     });
-}); };
-var instance = axios_1["default"].create({
-    baseURL: '/api',
-    timeout: 1000,
-    headers: { 'X-Custom-Header': 'foobar' }
-});
-// request拦截器
-instance.interceptors.request.use(function (config) {
-    if (js_cookie_1["default"].get("token")) {
-        config.headers['token'] = js_cookie_1["default"].get("token");
-    }
-    else {
-    }
-    return config;
-}, function (error) {
-    console.log(error); // for debug
-    Promise.reject(error);
-});
+}
+exports.POST = POST;

@@ -36,15 +36,9 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 exports.__esModule = true;
-exports.POST = exports.GET = void 0;
+exports.GET = void 0;
 var prisma_1 = require("libs/prisma");
 var server_utils_1 = require("libs/server_utils");
-var zod_1 = require("zod");
-// 用户注册校验模板
-var UserSchema = zod_1.z.object({
-    email: zod_1.z.string().email(),
-    password: zod_1.z.string()
-});
 /**
  * @description 用户列表
  * @author grantguo
@@ -64,56 +58,3 @@ function GET() {
     });
 }
 exports.GET = GET;
-/**
- * @description 用户注册
- * @author grantguo
- * @date 2025-04-11 14:31:54
-*/
-function POST(req) {
-    return __awaiter(this, void 0, void 0, function () {
-        var data, validation, email, password, users, pass_hash, error_1;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, req.json()];
-                case 1:
-                    data = _a.sent();
-                    validation = UserSchema.safeParse(data);
-                    if (!validation.success) {
-                        return [2 /*return*/, server_utils_1.responseError({ error: '参数校验失败', details: validation.error })];
-                    }
-                    email = data.email, password = data.password;
-                    return [4 /*yield*/, prisma_1.prisma.users.findMany({
-                            where: {
-                                email: email
-                            }
-                        })];
-                case 2:
-                    users = _a.sent();
-                    if (users.length > 0) {
-                        return [2 /*return*/, server_utils_1.responseError("用户名已存在")];
-                    }
-                    pass_hash = server_utils_1.generateHash(password);
-                    _a.label = 3;
-                case 3:
-                    _a.trys.push([3, 5, , 6]);
-                    return [4 /*yield*/, prisma_1.prisma.users.create({
-                            data: {
-                                username: email,
-                                email: email,
-                                password: password,
-                                password_hash: pass_hash
-                            }
-                        })];
-                case 4:
-                    _a.sent();
-                    return [2 /*return*/, server_utils_1.responseSuccess("添加成功")];
-                case 5:
-                    error_1 = _a.sent();
-                    console.log(error_1);
-                    return [3 /*break*/, 6];
-                case 6: return [2 /*return*/];
-            }
-        });
-    });
-}
-exports.POST = POST;

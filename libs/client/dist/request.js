@@ -1,21 +1,20 @@
 "use strict";
 exports.__esModule = true;
-var js_cookie_1 = require("js-cookie");
 var axios_1 = require("axios");
 var navigation_1 = require("next/navigation");
 var instance = axios_1["default"].create({
-    baseURL: '/api',
-    timeout: 5000
+    baseURL: '/api'
 });
 // request拦截器
 instance.interceptors.request.use(function (config) {
-    console.log('request', config, js_cookie_1["default"].get("token"));
-    if (js_cookie_1["default"].get("token")) {
-        config.headers['token'] = js_cookie_1["default"].get("token");
-    }
-    else {
-        navigation_1.redirect("/login");
-    }
+    console.log('request', config.headers["Token"]);
+    // if (config.headers['Token']) return config;
+    // const token = Cookies.get("token");
+    // if (token) {
+    //   config.headers['Token'] = token
+    // } else {
+    //   redirect("/login")
+    // }
     return config;
 }, function (error) {
     console.log(error); // for debug

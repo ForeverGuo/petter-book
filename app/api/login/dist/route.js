@@ -37,13 +37,9 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 exports.__esModule = true;
 exports.POST = void 0;
-var server_1 = require("next/server");
 var prisma_1 = require("libs/prisma");
 var server_utils_1 = require("libs/server_utils");
 var zod_1 = require("zod");
-var jsonwebtoken_1 = require("jsonwebtoken");
-var cookie_1 = require("cookie");
-var SECRET_KEY = process.env.SECRET_KEY; // 生产环境应使用环境变量
 var UserSchema = zod_1.z.object({
     username: zod_1.z.string(),
     password: zod_1.z.string()
@@ -55,7 +51,7 @@ var UserSchema = zod_1.z.object({
 */
 function POST(req) {
     return __awaiter(this, void 0, void 0, function () {
-        var reqData, validation, username, password, users, token, res;
+        var reqData, validation, username, password, users;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0: return [4 /*yield*/, req.json()];
@@ -79,18 +75,7 @@ function POST(req) {
                     if (server_utils_1.validateHash(password, users[0].password_hash)) {
                         return [2 /*return*/, server_utils_1.responseError("密码错误")];
                     }
-                    token = jsonwebtoken_1["default"].sign({ userId: users[0].password_hash }, SECRET_KEY, { expiresIn: '1h' } // Token 有效期 1 小时
-                    );
-                    res = server_1.NextResponse.next();
-                    res.headers.set('Set-Cookie', cookie_1.serialize('token', token, {
-                        httpOnly: true,
-                        secure: process.env.NODE_ENV === 'production',
-                        sameSite: 'strict',
-                        maxAge: 60 * 60,
-                        path: '/'
-                    }));
                     return [2 /*return*/, server_utils_1.responseSuccess({
-                            token: token,
                             user: {
                                 username: username,
                                 email: users[0].email

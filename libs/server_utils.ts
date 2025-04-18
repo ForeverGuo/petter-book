@@ -1,15 +1,13 @@
-
-import sha256 from 'crypto-js/sha256';
 import { NextResponse } from 'next/server';
-
+import bcrypt from 'bcryptjs';
+import { prisma } from 'libs/prisma'
 /**
  * @description 生成hash
  * @author grantguo
  * @date 2025-04-11 11:46:33
 */
-export const generateHash = (data: string, bits = 32) => {
-  const fullHash = sha256(data).toString();
-  return fullHash.substring(0, bits);
+export const generateHash = (data: string) => {
+  return bcrypt.hashSync(data, 10)
 };
 
 /**
@@ -17,9 +15,8 @@ export const generateHash = (data: string, bits = 32) => {
  * @author grantguo
  * @date 2025-04-11 11:47:54
 */
-export const validateHash = (clientHash:string, serverData:string) => {
-  const serverHash = generateHash(serverData);
-  return clientHash === serverHash;
+export const validateHash = (clientData:string, serverData:string) => {
+  return bcrypt.compareSync(generateHash(clientData), serverData)
 };
 
 
@@ -46,4 +43,32 @@ export const responseSuccess = (data: string | object) => {
     data,
   });
 };
+
+interface userType {
+  username: string;
+  password: string;
+}
+export const findUser = async (data: userType) => {
+  const { username, password } = data;
+  const users = await prisma.users.findMany({
+    where: {
+      username,
+    },
+  });
+  if (users.length === 0) {
+    return {
+      msg: "用户不存在"
+    };
+  }
+  if (validateHash(password, users[0].password_hash)) {
+    return {
+      msg: "密码错误"
+    };
+  }
+  
+  return {
+    username,
+    email: users[0].email,
+  }
+}
 

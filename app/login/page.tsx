@@ -4,6 +4,8 @@ import { FormEvent, useState } from "react"
 import { LoginForm } from "./loginForm"
 import { post } from "libs/client/utils"
 import Cookies from "js-cookie"
+import { redirect } from 'next/navigation';
+import { signIn } from "next-auth/react";
 export default function LoginPage() {
   const [ formData, setFormData ] = useState({
     username: "",
@@ -22,8 +24,15 @@ export default function LoginPage() {
     // 阻止表单默认行为
     e.preventDefault();
     console.log(formData)
-    const res = await post("/api/login", formData)
-    Cookies.set("token", res.data.token)
+    // const res = await post("/api/login", formData)
+    // Cookies.set("token", res.data.token)
+    // redirect("/")
+    const result = await signIn("credentials", {
+      username: formData.username,
+      password: formData.password,
+      redirect: false,
+    });
+    console.log(result, "++++++++++++++++")
   }
 
   return (
@@ -38,3 +47,4 @@ export default function LoginPage() {
     </div>
   )
 }
+

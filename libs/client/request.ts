@@ -4,17 +4,19 @@ import { redirect } from 'next/navigation';
 
 const instance = axios.create({
   baseURL: '/api',
-  timeout: 5000
+  // timeout: 5000
 });
 
 // request拦截器
 instance.interceptors.request.use(config => {
-  console.log('request', config, Cookies.get("token"))
-  if (Cookies.get("token")) {
-    config.headers['token'] = Cookies.get("token")
-  } else {
-    redirect("/login")
-  }
+  console.log('request', config.headers["Token"])
+  // if (config.headers['Token']) return config;
+  // const token = Cookies.get("token");
+  // if (token) {
+  //   config.headers['Token'] = token
+  // } else {
+  //   redirect("/login")
+  // }
   return config
 }, error => {
   console.log(error) // for debug
