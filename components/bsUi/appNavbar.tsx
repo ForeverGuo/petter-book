@@ -1,7 +1,7 @@
 "use client";
 
 import { ThemeToggle } from "components/theme/themeToggle";
-// import { signOut } from "next-auth/react";
+import { signOut } from "next-auth/react";
 import { Avatar, AvatarFallback, AvatarImage } from "components/ui/avatar"
 
 import {
@@ -15,8 +15,8 @@ import {
 
 export default function UserMenu({ user }: { user?: { name: string; image?: string } }) {
   return (
-    <div className="relative">
-      <div className="flex items-center gap-2 mr-3">
+    <div>
+      <div className="relative flex items-center gap-2 mr-4">
         {/* 切换主题按钮 */}
         <ThemeToggle></ThemeToggle>
         <DropdownMenu>
@@ -31,16 +31,16 @@ export default function UserMenu({ user }: { user?: { name: string; image?: stri
               </span>
             </div>
           </DropdownMenuTrigger>
-        <DropdownMenuContent>
-          <DropdownMenuLabel>My Account</DropdownMenuLabel>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem>Profile</DropdownMenuItem>
-          <DropdownMenuItem>Billing</DropdownMenuItem>
-          <DropdownMenuItem>Team</DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem>Log out</DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
+          <DropdownMenuContent>
+            <DropdownMenuLabel>My Account</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem>Profile</DropdownMenuItem>
+            <DropdownMenuItem>Billing</DropdownMenuItem>
+            <DropdownMenuItem>Team</DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={() => signOut()}>Log out</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </div>
   );

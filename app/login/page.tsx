@@ -1,16 +1,18 @@
 "use client"
 
-import { FormEvent, useState } from "react"
+import { FormEvent, useEffect, useState } from "react"
 import { LoginForm } from "./loginForm"
-import { post } from "libs/client/utils"
-import Cookies from "js-cookie"
 import { redirect } from 'next/navigation';
 import { signIn } from "next-auth/react";
+import { toast } from "sonner"
 export default function LoginPage() {
   const [ formData, setFormData ] = useState({
     username: "",
     password: ""
   })
+  useEffect(() => {
+
+  }, [])
   // 统一更新函数
   const updateFormData = (field: string, value: string) => {
     setFormData(prev => ({
@@ -24,15 +26,19 @@ export default function LoginPage() {
     // 阻止表单默认行为
     e.preventDefault();
     console.log(formData)
-    // const res = await post("/api/login", formData)
-    // Cookies.set("token", res.data.token)
-    // redirect("/")
     const result = await signIn("credentials", {
       username: formData.username,
       password: formData.password,
       redirect: false,
     });
     console.log(result, "++++++++++++++++")
+    if (result?.error) {
+      toast.warning(result.error)
+      return;
+    }
+    if (result?.ok) {
+      redirect("/")
+    }
   }
 
   return (

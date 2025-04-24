@@ -7,14 +7,6 @@ var instance = axios_1["default"].create({
 });
 // request拦截器
 instance.interceptors.request.use(function (config) {
-    console.log('request', config.headers["Token"]);
-    // if (config.headers['Token']) return config;
-    // const token = Cookies.get("token");
-    // if (token) {
-    //   config.headers['Token'] = token
-    // } else {
-    //   redirect("/login")
-    // }
     return config;
 }, function (error) {
     console.log(error); // for debug

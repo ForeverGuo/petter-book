@@ -1,4 +1,3 @@
-import Cookies from "js-cookie"
 import axios from 'axios'
 import { redirect } from 'next/navigation';
 
@@ -9,14 +8,6 @@ const instance = axios.create({
 
 // request拦截器
 instance.interceptors.request.use(config => {
-  console.log('request', config.headers["Token"])
-  // if (config.headers['Token']) return config;
-  // const token = Cookies.get("token");
-  // if (token) {
-  //   config.headers['Token'] = token
-  // } else {
-  //   redirect("/login")
-  // }
   return config
 }, error => {
   console.log(error) // for debug

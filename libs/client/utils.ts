@@ -1,5 +1,3 @@
-import Cookies from "js-cookie"
-import axios from 'axios'
 /**
  * @description post请求
  * @author grantguo
@@ -9,8 +7,7 @@ export const post = async (url: string, data: object) => {
   const res = await fetch(url, {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json',
-      'token': Cookies.get("token") || ""
+      'Content-Type': 'application/json'
     },
     body: JSON.stringify(data),
   });
@@ -27,7 +24,6 @@ export const get = async (url: string) => {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
-      'token': Cookies.get("token") || ""
     },
   });
   return res.json();

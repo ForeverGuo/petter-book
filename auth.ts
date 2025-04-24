@@ -1,44 +1,54 @@
 import NextAuth from 'next-auth'
 import CredentialsProvider from "next-auth/providers/credentials";
-import { PrismaAdapter } from "@auth/prisma-adapter"
-import { prisma } from "libs/prisma"
 import { findUser } from "libs/server_utils"
+import Google from "next-auth/providers/google";
+import GitHub from "next-auth/providers/github";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
+  secret: process.env.NEXTAUTH_SECRET,
+  debug: true, // 启用调试模式
+  logger: {
+    error(error: unknown) {
+      console.error("Auth Error:", error);
+    },
+  },
   providers: [
+    Google({
+      clientId: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    }),
+    GitHub({
+      clientId: process.env.GITHUB_ID,
+      clientSecret: process.env.GITHUB_SECRET,
+    }),
     CredentialsProvider({
       name: 'Credentials',
       credentials: {
         username: { label: "Username" },
         password: { label: "Password", type: "password" },
       },
-      authorize: async (credentials: any) => {
-        if (!credentials) {
+      authorize: async (credentials) => {
+        if (!credentials || !credentials.username || !credentials.password) {
           return null;
         }
-        // 1. 查找用户
+        // 检查用户是否存在
         const user = await findUser({
-          username: credentials.username,
-          password: credentials.password
+          username: credentials.username as string,
+          password: credentials.password as string
         })
-        // const user = { id: "1", name: "J Smith", email: "jsmith@example.com" }
-        console.log("user------------------", user);
-        // // // 2. 验证密码
-        // if (user && bcrypt.compareSync(credentials.password, user.password)) {
-        //   return { id: user.id.toString(), name: user.username, email: user.email };
-        // }
+        if (!user || user.code == 500) {
+          return null;
+        }
         return user;
       }
     })
   ],
   session: { strategy: "jwt" },
-  secret: process.env.NEXTAUTH_SECRET,
   pages: {
     signIn: '/login'
   },
   callbacks: {
     async authorized({ request, auth }) {
-      // console.log('authorized', request, auth)
       const url = request.nextUrl
       const user = auth?.user;
       
@@ -48,19 +58,23 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   
       return true
     },
-    // async session({ session, token }) {
-    //   if (token.sub && session.user) {
-    //     session.user.id = token.sub
-    //     session.user.role = token.role as string
-    //   }
-    //   return session
-    // },
-    async jwt({ token, user }) {
-      console.log('jwt', token, user)
-      if (user) {
-        token.role = user.role
+    jwt: async ({ token, user }) => {
+      if ((user as { username?: string })?.username) {
+        token.username = (user as { username: string }).username;
       }
       return token
-    }
+    },
+    session({ session, token }) {
+      console.log("session=", session)
+      console.log("token=", token)
+      session.user = {
+        id: token.sub as string,
+        name: token.username as string || token.name,
+        email: token.email as string,
+        image: token.picture,
+        emailVerified: null,
+      };
+      return session;
+    },
   }
 })

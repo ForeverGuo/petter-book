@@ -4,14 +4,16 @@ import { SidebarTrigger, useSidebar } from "components/ui/sidebar"
 import { Separator } from "components/ui/separator"
 import UserMenu from "components/bsUi/appNavbar";
 import { AppBreadcrumb } from "components/bsUi/appBreadcrumb";
+import { useSession } from "next-auth/react";
+
 export function AppHeader() {
+  const { data: session } = useSession()
   const { state } = useSidebar()
   const collapseStyle = state == "collapsed" ? "w-full" : "md:w-[calc(100%-var(--sidebar-width))]"
-
   const user = {
-    name: "Petter guo",
-    email: "810153274@qq.com",
-    image: "",
+    name:  session?.user?.name || "bonny",
+    email: session?.user?.email || "810153274@qq.com",
+    image: session?.user?.image || "",
   };
   return (
     <div>

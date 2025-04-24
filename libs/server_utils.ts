@@ -57,11 +57,13 @@ export const findUser = async (data: userType) => {
   });
   if (users.length === 0) {
     return {
+      code: 500,
       msg: "用户不存在"
     };
   }
   if (validateHash(password, users[0].password_hash)) {
     return {
+      code: 500,
       msg: "密码错误"
     };
   }

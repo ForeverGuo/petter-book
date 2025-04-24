@@ -7,6 +7,7 @@ import { SidebarProvider } from "components/ui/sidebar"
 import { AppSidebar } from "components/bsUi/appSidebar"
 import { AppHeader } from "components/bsUi/appHeader"
 import { usePathname } from "next/navigation"
+import { SessionProvider } from "next-auth/react";
 
 // 创建中间客户端组件
 export function ClientLayout({ children }: { children: React.ReactNode }) {
@@ -14,6 +15,7 @@ export function ClientLayout({ children }: { children: React.ReactNode }) {
   return (
     <LoadingProvider>
       <ProgressBar />
+      <SessionProvider> 
       <ThemeProvider>
         <SidebarProvider>
           { 
@@ -35,9 +37,9 @@ export function ClientLayout({ children }: { children: React.ReactNode }) {
               </>
             )
           }
-          
         </SidebarProvider>
       </ThemeProvider>
+      </SessionProvider>
     </LoadingProvider>
   );
 }

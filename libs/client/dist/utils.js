@@ -36,78 +36,47 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 exports.__esModule = true;
-exports.findUser = exports.responseSuccess = exports.responseError = exports.validateHash = exports.generateHash = void 0;
-var server_1 = require("next/server");
-var bcryptjs_1 = require("bcryptjs");
-var prisma_1 = require("libs/prisma");
+exports.get = exports.post = void 0;
 /**
- * @description 生成hash
+ * @description post请求
  * @author grantguo
- * @date 2025-04-11 11:46:33
+ * @date 2025-04-15 10:24:10
 */
-exports.generateHash = function (data) {
-    return bcryptjs_1["default"].hashSync(data, 10);
-};
-/**
- * @description 校验hash
- * @author grantguo
- * @date 2025-04-11 11:47:54
-*/
-exports.validateHash = function (clientData, serverData) {
-    return bcryptjs_1["default"].compareSync(exports.generateHash(clientData), serverData);
-};
-/**
- * @description 错误响应
- * @author grantguo
- * @date 2025-04-11 13:32:14
-*/
-exports.responseError = function (message, code) {
-    if (code === void 0) { code = 500; }
-    return server_1.NextResponse.json({
-        code: code,
-        message: message
-    });
-};
-/**
- * @description 成功响应
- * @author grantguo
- * @date 2025-04-11 13:32:14
-*/
-exports.responseSuccess = function (data) {
-    return server_1.NextResponse.json({
-        code: 200,
-        data: data
-    });
-};
-exports.findUser = function (data) { return __awaiter(void 0, void 0, void 0, function () {
-    var username, password, users;
+exports.post = function (url, data) { return __awaiter(void 0, void 0, void 0, function () {
+    var res;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0:
-                username = data.username, password = data.password;
-                return [4 /*yield*/, prisma_1.prisma.users.findMany({
-                        where: {
-                            username: username
-                        }
-                    })];
+            case 0: return [4 /*yield*/, fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                })];
             case 1:
-                users = _a.sent();
-                if (users.length === 0) {
-                    return [2 /*return*/, {
-                            code: 500,
-                            msg: "用户不存在"
-                        }];
-                }
-                if (exports.validateHash(password, users[0].password_hash)) {
-                    return [2 /*return*/, {
-                            code: 500,
-                            msg: "密码错误"
-                        }];
-                }
-                return [2 /*return*/, {
-                        username: username,
-                        email: users[0].email
-                    }];
+                res = _a.sent();
+                return [2 /*return*/, res.json()];
+        }
+    });
+}); };
+/**
+ * @description get请求
+ * @author grantguo
+ * @date 2025-04-15 10:24:20
+*/
+exports.get = function (url) { return __awaiter(void 0, void 0, void 0, function () {
+    var res;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, fetch(url, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })];
+            case 1:
+                res = _a.sent();
+                return [2 /*return*/, res.json()];
         }
     });
 }); };
