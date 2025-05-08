@@ -18,7 +18,7 @@ export default auth((req: reqType) => {
   if (publicPaths.includes(requesPathname)) {
     return NextResponse.next()
   }
-  console.log(req.auth)
+  // console.log(req.auth)
   if (!req.auth && !requesPathname.startsWith('/login')) {
     return NextResponse.redirect(new URL('/login', req.url))
   }

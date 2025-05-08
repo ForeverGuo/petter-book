@@ -44,7 +44,7 @@ export const columns: ColumnDef<Book>[] = [
     header: "出版社",
   },
   {
-    accessorKey: "createdTime",
+    accessorKey: "created_at",
     header: "创建时间",
   },
   {
