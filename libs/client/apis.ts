@@ -30,9 +30,10 @@ export const userList = () => {
  * @author grantguo
  * @date 2025-05-06 17:00:31
 */
-export const bookList = () => {
+export const bookList = (data?: object) => {
   return request({
     method: 'GET',
-    url: '/books'
+    url: '/books',
+    params: data
   })
 }

@@ -30,9 +30,10 @@ exports.userList = function () {
  * @author grantguo
  * @date 2025-05-06 17:00:31
 */
-exports.bookList = function () {
+exports.bookList = function (data) {
     return request_1["default"]({
         method: 'GET',
-        url: '/books'
+        url: '/books',
+        params: data
     });
 };

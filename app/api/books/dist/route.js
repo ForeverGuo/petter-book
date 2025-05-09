@@ -43,15 +43,32 @@ var server_utils_1 = require("libs/server_utils");
  * @description 用户登录
  * @author grantguo
  * @date 2025-04-11 14:48:07
-*/
-function GET(req) {
+ */
+function GET(request, _a) {
+    var params = _a.params;
     return __awaiter(this, void 0, void 0, function () {
-        var bookList;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, prisma_1.prisma.books.findMany()];
+        var url, pageStr, pageSizeStr, name, page, pageSize, bookList;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0:
+                    console.log(params, "----------------");
+                    url = new URL(request.url);
+                    pageStr = url.searchParams.get('page');
+                    pageSizeStr = url.searchParams.get('pageSize');
+                    name = url.searchParams.get('name');
+                    page = parseInt(pageStr || '1');
+                    pageSize = parseInt(pageSizeStr || '10');
+                    return [4 /*yield*/, prisma_1.prisma.books.findMany({
+                            where: name ? {
+                                title: {
+                                    contains: name
+                                }
+                            } : {},
+                            skip: (page - 1) * pageSize,
+                            take: pageSize
+                        })];
                 case 1:
-                    bookList = _a.sent();
+                    bookList = _b.sent();
                     console.log(bookList, "%%%%%%%%%%%%%%%%");
                     return [2 /*return*/, server_utils_1.responseSuccess(bookList)];
             }
